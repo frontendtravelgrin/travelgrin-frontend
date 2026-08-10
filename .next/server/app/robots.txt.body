@@ -1,0 +1,8 @@
+User-Agent: *
+Allow: /
+Disallow: /tgn-panel-control
+Disallow: /api
+Disallow: /panel-oferente
+Disallow: /mi-plan
+
+Sitemap: http://localhost:3000/sitemap.xml

@@ -1,0 +1,95 @@
+"use client";
+import { useTranslation } from "@/app/hooks/useTranslation";
+import React, { useState, useEffect } from "react";
+
+type Props = {
+    phrases: string[];
+    isNotAlone?: boolean;
+    isBlackText?: boolean;
+    isBiggerText?: boolean;
+}
+
+const TextChangerEffect = ({phrases, isNotAlone, isBlackText, isBiggerText}: Props) => {
+  const {t} = useTranslation()
+  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+  const [isFlipping, setIsFlipping] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsFlipping(true);
+      
+      setTimeout(() => {
+        setCurrentPhraseIndex((prev) => (prev + 1) % phrases.length);
+        setIsFlipping(false);
+      }, 300);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [phrases.length]);
+
+  return (
+    <div className={`items-center justify-center p-4 md:p-6 `}>
+      <div className="text-center max-w-4xl mx-auto">
+        <h1 className="text-[16px] md:text-6xl lg:text-7xl font-bold text-white mb-0">
+          {/* Contenedor con altura fija para todo el texto */}
+          <div className={` flex items-center justify-center ${isNotAlone ? "h-[65px] md:h-[90px] lg:h-[105px]" : "h-[0rem]"}`}>
+            <div className={`leading-tight text-[21px] md:text-[25.76px]`}>
+              <span 
+                className={`changing-text inline-block transition-all duration-300 ease-in-out transform-gpu ${
+                  isFlipping ? 'flip-out' : 'flip-in'
+                } `}
+                style={{
+                  transformStyle: 'preserve-3d',
+                  perspective: '1000px',
+                  color: isBlackText ? '#273166' : 'white',
+                }}
+              >
+                {phrases[currentPhraseIndex]}
+              </span>
+              {isNotAlone && (
+                <span className={`text-white text-[21px] md:text-[25.76px] whitespace-pre-line`}>
+                  {" "} {t("que_necesitas_a_un_click")}
+                </span>
+              )}
+            </div>
+          </div>
+        </h1>
+      </div>
+
+      <style jsx>{`
+        .flip-in {
+          transform: rotateX(0deg);
+          opacity: 1;
+        }
+        
+        .flip-out {
+          transform: rotateX(-90deg);
+          opacity: 0;
+        }
+        
+        .changing-text {
+          transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), 
+                      opacity 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+          transform-origin: center center;
+        }
+        
+        @keyframes flipWord {
+          0% {
+            transform: rotateX(0deg);
+            opacity: 1;
+          }
+          50% {
+            transform: rotateX(-90deg);
+            opacity: 0;
+          }
+          100% {
+            transform: rotateX(0deg);
+            opacity: 1;
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default TextChangerEffect;
