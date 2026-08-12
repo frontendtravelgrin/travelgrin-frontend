@@ -74,7 +74,7 @@ export default function ModalDemandante({
 
   const categories = React.useMemo(
     () => categoryItems
-      .filter((category) => (category.visibleInCard ?? category.isPrimaryCategory) === true && category.isPublicVisible !== false)
+      .filter((category) => category.isPrimaryCategory === true && category.isPublicVisible !== false)
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || (a.description || "").localeCompare(b.description || ""))
       .map((category) => ({
         value: category.description,

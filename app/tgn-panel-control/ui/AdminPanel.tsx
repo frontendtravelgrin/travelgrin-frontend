@@ -2311,7 +2311,7 @@ export default function AdminPanel({ section, publicationsView = "overview" }: A
     const shouldStartAsPrimaryCategory = Boolean(
       blockId &&
       !parentId &&
-    categories.some((category) => category.blockId === blockId && (category.visibleInCard ?? category.isPrimaryCategory) === true)
+    categories.some((category) => category.blockId === blockId && category.isPrimaryCategory === true)
     );
     setCategoryModalMode("category");
     setCatError("");
