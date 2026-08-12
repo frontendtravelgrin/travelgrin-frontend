@@ -69,7 +69,8 @@ export default function ModalDemandante({
   categorySelected,
   destinationCountrySelected,
 }: Props) {
-  const { t, locale } = useTranslation()
+  const translation = useTranslation()
+  const t = translation.t
   const [categoryItems, setCategoryItems] = React.useState<Category[]>([]);
 
   const categories = React.useMemo(
@@ -78,10 +79,10 @@ export default function ModalDemandante({
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || (a.description || "").localeCompare(b.description || ""))
       .map((category) => ({
         value: category.description,
-        label: pickI18nText(category.descriptionI18n ?? null, locale, category.description),
+        label: pickI18nText(category.descriptionI18n ?? null, translation.locale, category.description),
       }))
       .filter((category) => category.value),
-    [categoryItems, locale]
+    [categoryItems, translation.locale]
   );
   const [country, setCountry] = React.useState<string>("");
   const [destinationCountry, setDestinationCountry] = React.useState<string>(

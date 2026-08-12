@@ -65,7 +65,8 @@ function finalizeVisibleSearchText(value: string) {
 
 export default function SearchDestination() {
   const router = useRouter();
-  const { t, locale } = useTranslation();
+  const translation = useTranslation();
+  const t = translation.t;
   const { selectedCountry } = useCountry();
 
   const [destinationCountry, setDestinationCountry] = useState<string>("");
@@ -110,7 +111,7 @@ export default function SearchDestination() {
     },
   };
   const homeSearchLabels = Object.fromEntries(
-    Object.entries(homeSearchLabelsByLocale[locale] ?? homeSearchLabelsByLocale.es).map(([key, value]) => [
+    Object.entries(homeSearchLabelsByLocale[translation.locale] ?? homeSearchLabelsByLocale.es).map(([key, value]) => [
       key,
       finalizeVisibleSearchText(normalizeVisibleSearchText(String(value))),
     ]),
@@ -164,7 +165,7 @@ export default function SearchDestination() {
             });
             return {
               id: group.id,
-              label: pickI18nText(group.labelI18n ?? null, locale, group.label ?? categoriesFallbackLabel),
+              label: pickI18nText(group.labelI18n ?? null, translation.locale, group.label ?? categoriesFallbackLabel),
               imageUrl: group.imageUrl ?? null,
               roots,
               childrenBy,
@@ -187,7 +188,7 @@ export default function SearchDestination() {
             {
               id: fallbackGroup?.id ?? "__fallback__",
               label: fallbackGroup
-                ? pickI18nText(fallbackGroup.labelI18n ?? null, locale, fallbackGroup.label ?? categoriesFallbackLabel)
+                ? pickI18nText(fallbackGroup.labelI18n ?? null, translation.locale, fallbackGroup.label ?? categoriesFallbackLabel)
                 : categoriesFallbackLabel,
               imageUrl: fallbackGroup?.imageUrl ?? null,
               roots,
@@ -203,7 +204,7 @@ export default function SearchDestination() {
     return () => {
       active = false;
     };
-  }, [categoriesFallbackLabel, locale]);
+  }, [categoriesFallbackLabel, translation.locale]);
 
   const selectedCategoryValues = selectedCategory && selectedCategory !== ALL_CATEGORIES_VALUE ? [selectedCategory] : [];
   const isAllCategoriesSelected = selectedCategory === ALL_CATEGORIES_VALUE;
