@@ -67,6 +67,7 @@ export default function SearchDestination() {
   const router = useRouter();
   const translation = useTranslation();
   const t = translation.t;
+  const locale = translation.locale;
   const { selectedCountry } = useCountry();
 
   const [destinationCountry, setDestinationCountry] = useState<string>("");
