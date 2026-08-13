@@ -2,7 +2,6 @@
 
 import { type ComponentType, type ReactNode, useMemo, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import {
   ChevronRight,
   FileText,
@@ -47,8 +46,7 @@ export default function AdminControlLayout({
   activeSection,
 }: AdminControlLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const pathname = usePathname();
-  const basePath = pathname.startsWith("/tgn-panel-control") ? "/tgn-panel-control" : "/admin";
+  const basePath = "/tgn-panel-control";
 
   return (
     <div className="flex min-h-screen overflow-x-hidden bg-slate-50">

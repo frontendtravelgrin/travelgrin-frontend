@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { AlertTriangle, ArrowDown, ArrowUp, ArrowUpRight, Building2, ChevronDown, ChevronRight, FileText, ImageIcon, Languages, MapPinned, MessageSquareMore, Plus, UserRound, X } from "lucide-react";
 import { useTranslation } from "@/app/hooks/useTranslation";
 import { pickI18nText, type I18nRecord } from "@/app/lib/i18nContent";
@@ -895,8 +895,7 @@ async function api<T>(url: string, init?: RequestInit): Promise<T> {
   if (!res.ok || data?.ok === false) {
     if (res.status === 401 && typeof window !== "undefined") {
       const next = `${window.location.pathname}${window.location.search}`;
-      const basePath = window.location.pathname.startsWith("/tgn-panel-control") ? "/tgn-panel-control" : "/admin";
-      window.location.href = `${basePath}/login?next=${encodeURIComponent(next)}`;
+      window.location.href = `/tgn-panel-control/login?next=${encodeURIComponent(next)}`;
     }
     throw new Error(data?.error || data?.message || `Error ${res.status}`);
   }
@@ -1284,8 +1283,7 @@ function AdminEditorSection({
 export default function AdminPanel({ section, publicationsView = "overview" }: AdminPanelProps) {
   const { locale, t } = useTranslation();
   const router = useRouter();
-  const pathname = usePathname();
-  const basePath = pathname.startsWith("/tgn-panel-control") ? "/tgn-panel-control" : "/admin";
+  const basePath = "/tgn-panel-control";
   const adminRootRef = useRef<HTMLDivElement | null>(null);
   const isNewPublicationPage = publicationsView === "new";
   const [loading, setLoading] = useState(true);
