@@ -409,7 +409,9 @@ export function PublicationCard({
 }) {
   const { toggle, has } = usePlan();
   const isSaved = has(item.id);
-  const { locale, t } = useTranslation();
+  const translation = useTranslation();
+  const t = translation.t;
+  const locale = translation.locale;
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const pathname = usePathname();
   const searchParams = useSearchParams();
