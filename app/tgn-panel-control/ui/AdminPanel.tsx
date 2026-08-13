@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { AlertTriangle, ArrowDown, ArrowUp, ArrowUpRight, Building2, ChevronDown, ChevronRight, FileText, ImageIcon, Languages, MapPinned, MessageSquareMore, Plus, UserRound, X } from "lucide-react";
 import { useTranslation } from "@/app/hooks/useTranslation";
 import { pickI18nText, type I18nRecord } from "@/app/lib/i18nContent";
@@ -895,7 +895,8 @@ async function api<T>(url: string, init?: RequestInit): Promise<T> {
   if (!res.ok || data?.ok === false) {
     if (res.status === 401 && typeof window !== "undefined") {
       const next = `${window.location.pathname}${window.location.search}`;
-      window.location.href = `/admin/login?next=${encodeURIComponent(next)}`;
+      const basePath = window.location.pathname.startsWith("/tgn-panel-control") ? "/tgn-panel-control" : "/admin";
+      window.location.href = `${basePath}/login?next=${encodeURIComponent(next)}`;
     }
     throw new Error(data?.error || data?.message || `Error ${res.status}`);
   }
@@ -1283,6 +1284,8 @@ function AdminEditorSection({
 export default function AdminPanel({ section, publicationsView = "overview" }: AdminPanelProps) {
   const { locale, t } = useTranslation();
   const router = useRouter();
+  const pathname = usePathname();
+  const basePath = pathname.startsWith("/tgn-panel-control") ? "/tgn-panel-control" : "/admin";
   const adminRootRef = useRef<HTMLDivElement | null>(null);
   const isNewPublicationPage = publicationsView === "new";
   const [loading, setLoading] = useState(true);
@@ -2311,7 +2314,7 @@ export default function AdminPanel({ section, publicationsView = "overview" }: A
     const shouldStartAsPrimaryCategory = Boolean(
       blockId &&
       !parentId &&
-    categories.some((category) => category.blockId === blockId && category.isPrimaryCategory === true)
+    categories.some((category) => category.blockId === blockId && (category.visibleInCard ?? category.isPrimaryCategory) === true)
     );
     setCategoryModalMode("category");
     setCatError("");
@@ -2908,7 +2911,7 @@ export default function AdminPanel({ section, publicationsView = "overview" }: A
       setPublicationTab("publicaciones");
       setPublicationSearch("");
       if (isNewPublicationPage) {
-        router.push("/admin?section=publicaciones");
+        router.push(`${basePath}?section=publicaciones`);
       } else {
         setShowPublicationEditor(false);
         window.setTimeout(() => publicationsTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
@@ -6143,7 +6146,7 @@ export default function AdminPanel({ section, publicationsView = "overview" }: A
   );
 
   const openNewPublicationEditor = () => {
-    router.push("/admin/publicaciones/nueva");
+    router.push(`${basePath}/publicaciones/nueva`);
   };
 
   const publicationTypeLabel = (item: Publication) => (item.primaryGroupKey === "prestacion" ? "Prestación" : "Publicación");
@@ -7462,7 +7465,7 @@ export default function AdminPanel({ section, publicationsView = "overview" }: A
           <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-3 sm:p-4">
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <h3 className="text-xl font-semibold text-slate-900">{editingId ? "Editar publicación" : "Nueva publicación"}</h3>
-              <button type="button" onClick={() => (isNewPublicationPage ? router.push("/admin?section=publicaciones") : setShowPublicationEditor(false))} className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">Cerrar</button>
+              <button type="button" onClick={() => (isNewPublicationPage ? router.push(`${basePath}?section=publicaciones`) : setShowPublicationEditor(false))} className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">Cerrar</button>
             </div>
           <div className="grid gap-5 rounded-[28px] bg-gradient-to-b from-slate-50 to-[#F8FBFD] p-3 sm:p-5">
           {pEditorMode === "prestacion" ? (
