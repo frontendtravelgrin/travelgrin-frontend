@@ -252,6 +252,11 @@ export default function SearchBar() {
 
   const onSearch = () => {
     const hasDestination = Boolean(destinationCountry.trim());
+    const hasCategoryFilter = Boolean(selectedCategory.trim() || selectedSubcategory.trim());
+    if (!hasDestination && !hasCategoryFilter) {
+      setDestinationError(true);
+      return;
+    }
     if (hasDestination) {
       fetch("/api/destination-searches", {
         method: "POST",
@@ -356,9 +361,6 @@ export default function SearchBar() {
           onSubmit={onSearch}
         />
       </div>
-      <p className="text-center mt-3 text-[14px] text-gray-500 font-medium">
-        {t("hint_busqueda_abierta")}
-      </p>
     </div>
   );
 }
