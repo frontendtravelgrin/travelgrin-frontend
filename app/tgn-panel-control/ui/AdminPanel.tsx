@@ -6504,6 +6504,17 @@ export default function AdminPanel({ section, publicationsView = "overview" }: A
                     </span>
                   </div>
 
+                  {selectedFeedback.publicationTitle && selectedFeedback.publicationTitle !== "Feedback general" && (
+                    <div className="border-b border-slate-100 pb-4">
+                      <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Pantalla de origen</p>
+                      <p className="mt-1 break-all text-sm font-medium text-indigo-600">
+                        <a href={selectedFeedback.publicationTitle} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                          {selectedFeedback.publicationTitle}
+                        </a>
+                      </p>
+                    </div>
+                  )}
+
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Mensaje</p>
                     <div className="mt-2 whitespace-pre-wrap rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm leading-6 text-slate-700">
