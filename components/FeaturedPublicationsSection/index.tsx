@@ -911,6 +911,7 @@ export default function FeaturedPublicationsSection() {
                     </p>
                     <p className="flex items-center gap-1 text-sm text-slate-600">
                       {flagCountryCode ? (
+                        // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={`https://flagcdn.com/20x15/${flagCountryCode.toLowerCase()}.png`}
                           alt={destination || pub.country || "flag"}

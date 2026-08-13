@@ -22,6 +22,10 @@ export default function Steps() {
       description: t("tu_oferta_llegara"),
       iconSrc: "/mostrar-2.webp",
       cardBg: "bg-white",
+      // extraIcon: {
+      //   src: "/maletin_2.png",
+      //   classes: "lg:h-[202px] lg:w-[360px] md:h-[100px] md:w-[100px] h-24 w-24 object-contain absolute mt-[10rem] ml-[2rem] md:-mt-[8rem] md:ml-[6rem] lg:-mt-10 lg:-right-[3rem]"
+      // }
     },
     {
       id: 3,

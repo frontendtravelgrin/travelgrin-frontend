@@ -39,6 +39,7 @@ const EmailInput = ({
     const email = e.target.value;
     setValue(email);
     
+    // Validación en tiempo real
     if (email.length > 0 && !validateEmail(email)) {
       setEmailError?.("Formato de email inválido");
     } else {

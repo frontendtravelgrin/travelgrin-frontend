@@ -27,20 +27,26 @@ const MaterialTextarea = ({
   const [isFocused, setIsFocused] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const maxLength = 500;
+
+  // Función para ajustar automáticamente la altura
   const adjustHeight = () => {
     const textarea = textareaRef.current;
     if (textarea) {
+      // Resetear altura para obtener scrollHeight correcto
       textarea.style.height = "auto";
+
+      // Calcular nueva altura con límites
       const newHeight = Math.min(textarea.scrollHeight, 147);
       textarea.style.height = `${newHeight}px`;
     }
   };
 
+  // Ajustar altura cuando cambie el valor
   useEffect(() => {
     adjustHeight();
   }, [value]);
 
-
+  // Determinar si hay icono para ajustar el padding
   const hasIcon = isSearching || isStop || isContanos || isWeb;
   const truncateText = (text, maxLength) => {
     if (text.length <= maxLength) return text;
@@ -89,14 +95,20 @@ const MaterialTextarea = ({
             scrollbarWidth: "thin",
             scrollbarColor: "#14b8a6 #f1f5f9",
             lineHeight: "1.5",
+            // Forzar fondo blanco para iOS
             backgroundColor: "#ffffff",
-            WebkitAppearance: "none",
+            WebkitAppearance: "none", // Remover estilos nativos de iOS
+            // Sombras más compatibles con iOS
             boxShadow:
               "0 8px 32px -12px rgba(8, 217, 189, 0.3), 0 4px 16px -6px rgba(4, 181, 189, 0.25), 0 2px 8px -3px rgba(0, 154, 188, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.1)",
+            // Alternativa para la sombra en iOS
             WebkitBoxShadow:
               "0 8px 32px -12px rgba(8, 217, 189, 0.3), 0 4px 16px -6px rgba(4, 181, 189, 0.25), 0 2px 8px -3px rgba(0, 154, 188, 0.2)",
+            // Forzar opacidad completa
             opacity: "1",
+            // Prevenir zoom en iOS
             fontSize: "16px",
+            // Mejoras para rendering en iOS
             WebkitTransform: "translateZ(0)",
             transform: "translateZ(0)",
             backfaceVisibility: "hidden",
@@ -120,6 +132,7 @@ const MaterialTextarea = ({
               : "text-gray-500"
           }`}
           style={{
+            // Asegurar que el fondo del label también sea blanco en iOS
             backgroundColor: value || isFocused ? "#ffffff" : "transparent",
             zIndex: 5,
           }}

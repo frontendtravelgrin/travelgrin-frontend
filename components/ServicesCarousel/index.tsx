@@ -103,8 +103,7 @@ function useCardsPerView() {
 }
 
 export default function ServicesCarousel() {
-  const translation = useTranslation();
-  const t = translation.t;
+  const { t, locale } = useTranslation();
   const isClient = useIsClient();
   const router = useRouter();
   const { isOpenModalDemandante, isOpenModalOferente, selectedCountry } = useCountry();
@@ -275,7 +274,7 @@ export default function ServicesCarousel() {
         <div className="flex">
           <div className="flex w-full">
             {pageItems.map((category) => {
-              const title = pickI18nText(category.descriptionI18n ?? null, translation.locale, category.description);
+              const title = pickI18nText(category.descriptionI18n ?? null, locale, category.description);
               const icon = String(category.iconImageUrl ?? "").trim();
               const image = String(category.cardImageUrl ?? "").trim();
               return (

@@ -1,11 +1,13 @@
 import { useState } from 'react';
+
+// Checkbox rounded simple Material Design
 const RoundedCheckbox = ({ 
   id, 
   label, 
   checked = false, 
   onChange,
   disabled = false,
-  size = "md" 
+  size = "md" // sm, md, lg
 }: any) => {
   const sizeClasses = {
     sm: "w-4 h-4",

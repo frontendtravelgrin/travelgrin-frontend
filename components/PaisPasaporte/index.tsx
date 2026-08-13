@@ -34,12 +34,12 @@ export default function PaisPasaporte({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const isClient = useIsClient();
-
+  // Cargar países al montar el componente
   useEffect(() => {
     fetchCountries();
   }, []);
 
-
+  // Verificar localStorage cuando los países ya estén cargados
   useEffect(() => {
     if (countries.length > 0 && isClient) {
       const savedCountry = localStorage.getItem("travelgrin_country_selected");
@@ -55,16 +55,20 @@ export default function PaisPasaporte({
     }
   }, [countries, isClient]);
 
+  // Fetch países de la API gratuita
   const fetchCountries = async () => {
     try {
       const response = await fetch("/api/countries");
       const payload = await response.json().catch(() => ({}));
       const data = Array.isArray(payload?.items) ? payload.items : [];
+
+      // Mapear países con nombres en español
       const countriesWithSpanish = data.map((country: any) => ({
         ...country,
         spanishName: country.translations?.spa?.common || country.name.common,
       }));
 
+      // Ordenar países alfabéticamente por nombre en español
       const sortedCountries = countriesWithSpanish.sort((a, b) =>
         a.spanishName.localeCompare(b.spanishName)
       );
@@ -75,6 +79,7 @@ export default function PaisPasaporte({
     }
   };
 
+  // Filtrar países según búsqueda
   const filteredCountries = countries.filter(
     (country) =>
       country?.spanishName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -85,6 +90,8 @@ export default function PaisPasaporte({
     setSelectedCountry(country.spanishName);
     setIsDropdownOpen(false);
     setSearchTerm("");
+
+    // Guardar en localStorage
     if (isClient) {
       localStorage.setItem(
         "travelgrin_country_selected",

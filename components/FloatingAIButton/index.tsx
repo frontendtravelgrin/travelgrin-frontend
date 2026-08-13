@@ -2,8 +2,8 @@ import React, { useState } from "react";
 
 interface FloatingAIButtonProps {
   onClick: () => void;
-  isInFooter?: boolean;
-  is425w: boolean;
+  isInFooter?: boolean; // Nueva prop para saber si está en el footer
+  is425w: boolean; // Nueva prop para saber si el ancho es 425px o menos
 }
 
 export default function FloatingAIButton({
@@ -21,6 +21,7 @@ export default function FloatingAIButton({
           : "fixed bottom-6 right-6 z-[9999]"
       }
       style={{
+        // Propiedades específicas para iOS
         transform: isInFooter
           ? "translateY(-50%) translateZ(0)"
           : "translateZ(0)",

@@ -177,7 +177,7 @@ export default function Footer() {
           />
         </div>
       </div>
-
+      {/* // tablet */}
       <div
         style={{
           background:

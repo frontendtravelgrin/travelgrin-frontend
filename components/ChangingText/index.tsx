@@ -18,10 +18,11 @@ const TextChangerEffect = ({phrases, isNotAlone, isBlackText, isBiggerText}: Pro
     const interval = setInterval(() => {
       setIsFlipping(true);
       
+      // Después de la animación de flip, cambiar el texto
       setTimeout(() => {
         setCurrentPhraseIndex((prev) => (prev + 1) % phrases.length);
         setIsFlipping(false);
-      }, 300);
+      }, 300); // Duración de la animación flip
     }, 3000);
 
     return () => clearInterval(interval);
@@ -34,6 +35,7 @@ const TextChangerEffect = ({phrases, isNotAlone, isBlackText, isBiggerText}: Pro
           {/* Contenedor con altura fija para todo el texto */}
           <div className={` flex items-center justify-center ${isNotAlone ? "h-[65px] md:h-[90px] lg:h-[105px]" : "h-[0rem]"}`}>
             <div className={`leading-tight text-[21px] md:text-[25.76px]`}>
+              {/* Texto dinámico con efecto flip */}
               <span 
                 className={`changing-text inline-block transition-all duration-300 ease-in-out transform-gpu ${
                   isFlipping ? 'flip-out' : 'flip-in'
@@ -46,6 +48,7 @@ const TextChangerEffect = ({phrases, isNotAlone, isBlackText, isBiggerText}: Pro
               >
                 {phrases[currentPhraseIndex]}
               </span>
+              {/* Texto fijo continuando la oración */}
               {isNotAlone && (
                 <span className={`text-white text-[21px] md:text-[25.76px] whitespace-pre-line`}>
                   {" "} {t("que_necesitas_a_un_click")}
@@ -56,6 +59,7 @@ const TextChangerEffect = ({phrases, isNotAlone, isBlackText, isBiggerText}: Pro
         </h1>
       </div>
 
+      {/* Estilos CSS para el efecto flip */}
       <style jsx>{`
         .flip-in {
           transform: rotateX(0deg);

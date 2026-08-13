@@ -36,15 +36,18 @@ const CountrySelectionModal = ({
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const [inputFocused, setInputFocused] = useState(false);
   const isClient = useIsClient();
-  const translation = useTranslation();
-  const t = translation.t;
+  const { t, locale } = useTranslation();
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const modalRef = useRef<HTMLDivElement | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-
+//
+  // Bloquear scroll del body y configurar viewport
   useEffect(() => {
     if (isOpen) {
+      // Guardar posición actual del scroll
       const scrollY = window.scrollY;
+
+      // Aplicar estilos para prevenir scroll y movimiento
       document.body.style.position = "fixed";
       document.body.style.top = `-${scrollY}px`;
       document.body.style.left = "0";
@@ -53,6 +56,7 @@ const CountrySelectionModal = ({
       document.body.style.height = "100vh";
       document.body.style.overflow = "hidden";
 
+      // Prevenir zoom en dispositivos móviles
       const viewport = document.querySelector("meta[name=viewport]");
       if (viewport && window.innerWidth <= 768) {
         viewport.setAttribute(
@@ -62,6 +66,7 @@ const CountrySelectionModal = ({
       }
 
       return () => {
+        // Restaurar estilos del body
         document.body.style.position = "";
         document.body.style.top = "";
         document.body.style.left = "";
@@ -70,8 +75,10 @@ const CountrySelectionModal = ({
         document.body.style.height = "";
         document.body.style.overflow = "";
 
+        // Restaurar scroll
         window.scrollTo(0, scrollY);
 
+        // Restaurar viewport
         if (viewport && window.innerWidth <= 768) {
           viewport.setAttribute(
             "content",
@@ -82,6 +89,7 @@ const CountrySelectionModal = ({
     }
   }, [isOpen]);
 
+  // Detectar teclado virtual usando Visual Viewport API
   useEffect(() => {
     if (!isClient || !isOpen) return;
 
@@ -92,9 +100,12 @@ const CountrySelectionModal = ({
       if (window.visualViewport) {
         const currentHeight = window.visualViewport.height;
         const heightDifference = initialViewportHeight - currentHeight;
+
+        // Considerar que hay teclado si la diferencia es significativa
         const keyboardIsOpen = heightDifference > 150;
         setIsKeyboardOpen(keyboardIsOpen);
 
+        // Si hay teclado y el input está enfocado, posicionar el dropdown
         if (keyboardIsOpen && inputFocused && dropdownRef.current) {
           setTimeout(() => {
             const dropdown = dropdownRef.current;
@@ -102,12 +113,18 @@ const CountrySelectionModal = ({
             const inputRect = searchInputRef.current?.getBoundingClientRect();
 
             if (inputRect) {
+              // En iOS, siempre mostrar hacia abajo a menos que no haya espacio
               const spaceBelow = availableHeight - inputRect.bottom - 20;
               const spaceAbove = inputRect.top - 20;
-              const minDropdownHeight = 200; 
+
+              // Definir alturas mínimas y máximas
+              const minDropdownHeight = 200; // Reducido para iOS
               const maxDropdownHeight = 300;
+
+              // En iOS, preferir siempre hacia abajo
               if (isIOS) {
                 if (spaceBelow >= 150) {
+                  // Mínimo más bajo para iOS
                   const optimalHeight = Math.min(
                     maxDropdownHeight,
                     Math.max(minDropdownHeight, spaceBelow)
@@ -120,6 +137,7 @@ const CountrySelectionModal = ({
                   dropdown.style.top = "100%";
                   dropdown.style.bottom = "auto";
                 } else {
+                  // Si no hay espacio abajo, usar lo que haya disponible
                   dropdown.style.maxHeight = `${spaceBelow - 10}px`;
                   dropdown.style.minHeight = `${Math.min(
                     150,
@@ -129,6 +147,7 @@ const CountrySelectionModal = ({
                   dropdown.style.bottom = "auto";
                 }
               } else {
+                // Android: lógica original
                 if (spaceBelow >= minDropdownHeight) {
                   const optimalHeight = Math.min(maxDropdownHeight, spaceBelow);
                   dropdown.style.maxHeight = `${optimalHeight}px`;
@@ -163,6 +182,8 @@ const CountrySelectionModal = ({
         }
       }
     };
+
+    // Usar Visual Viewport API si está disponible
     if (window.visualViewport) {
       window.visualViewport.addEventListener("resize", handleViewportChange);
       return () => {
@@ -174,6 +195,7 @@ const CountrySelectionModal = ({
         }
       };
     } else {
+      // Fallback para navegadores sin Visual Viewport API
       const handleResize = () => {
         const currentHeight = window.innerHeight;
         const heightDifference = initialViewportHeight - currentHeight;
@@ -189,6 +211,7 @@ const CountrySelectionModal = ({
     }
   }, [isClient, isOpen, inputFocused]);
 
+  // Verificar si el usuario ya completó la selección
   const openPassportModal = () => {
     setIsOpen(true);
     setTimeout(() => {
@@ -212,6 +235,7 @@ const CountrySelectionModal = ({
     return () => window.removeEventListener("tg-open-country-modal", onOpen);
   }, [isClient]);
 
+  // Fetch países de la API gratuita
   const fetchCountries = async () => {
     try {
       const response = await fetch(
@@ -271,6 +295,7 @@ const CountrySelectionModal = ({
     setSearchTerm("");
     setInputFocused(false);
 
+    // Cerrar teclado
     if (searchInputRef.current) {
       searchInputRef.current.blur();
     }
@@ -282,6 +307,7 @@ const CountrySelectionModal = ({
 
     if (newDropdownState) {
       setSearchTerm("");
+      // Enfocar el input automáticamente cuando se abre
       setTimeout(() => {
         if (searchInputRef.current) {
           searchInputRef.current.focus();
@@ -300,6 +326,7 @@ const CountrySelectionModal = ({
   };
 
   const handleInputBlur = () => {
+    // Delay para permitir selección de país
     setTimeout(() => {
       setInputFocused(false);
     }, 200);
@@ -342,7 +369,7 @@ const CountrySelectionModal = ({
       countryRequired: "Scegli il paese del tuo passaporto per continuare.",
     },
   };
-  const modalLabels = modalLabelsByLocale[translation.locale] ?? modalLabelsByLocale.es;
+  const modalLabels = modalLabelsByLocale[locale] ?? modalLabelsByLocale.es;
 
   return (
     <div
@@ -563,6 +590,7 @@ const CountrySelectionModal = ({
               <div
                 className="overflow-y-auto"
                 style={{
+                  // Altura adaptativa por dispositivo
                   minHeight: /iPad|iPhone|iPod/.test(navigator.userAgent)
                     ? isKeyboardOpen
                       ? "150px"

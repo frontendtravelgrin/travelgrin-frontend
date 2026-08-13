@@ -12,6 +12,7 @@ export default function HeroCarousel() {
   const [isClient, setIsClient] = useState(false);
   const { hideCountryOnOpenModal, setHideCountryOnOpenModal } = useCountry();
 
+  // Array de imágenes hero para desktop/tablet
   const heroImages = [
     "/hero1.webp",
     "/hero2.webp",
@@ -20,7 +21,7 @@ export default function HeroCarousel() {
     "/hero5.webp",
   ];
 
-
+  // Array de imágenes hero para mobile
   const heroImagesMobile = [
     "/hero-mobile-1.webp",
     "/hero-mobile-2.webp",
@@ -29,10 +30,12 @@ export default function HeroCarousel() {
     "/hero-mobile-5.webp",
   ];
 
+  // Asegurar que el componente se hidrate correctamente
   useEffect(() => {
     setIsClient(true);
   }, []);
 
+  // Detectar dispositivo móvil de forma simple y directa
   useEffect(() => {
     if (!isClient) return;
 
@@ -46,6 +49,7 @@ export default function HeroCarousel() {
     return () => window.removeEventListener("resize", checkIsMobile);
   }, [isClient]);
 
+  // Auto-advance carousel
   useEffect(() => {
     if (!isClient) return;
 
@@ -57,6 +61,7 @@ export default function HeroCarousel() {
     return () => clearInterval(timer);
   }, [isClient, isMobile]);
 
+  // Reset slide cuando cambia el tipo de dispositivo
   useEffect(() => {
     setCurrentSlide(0);
   }, [isMobile]);
@@ -70,6 +75,8 @@ export default function HeroCarousel() {
   }
 
   const currentImages = isMobile ? heroImagesMobile : heroImages;
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+
   const handleHideCountryOnOpenModal = (hide: boolean) => {
     setHideCountryOnOpenModal?.(hide);
   };
@@ -92,11 +99,14 @@ export default function HeroCarousel() {
               alt={`Hero ${index + 1}`}
               fill
               className="w-full h-full object-cover"
-              priority={index === 0}
-              quality={100} 
+              priority={index === 0} // Solo la primera imagen como priority
+              quality={100} // Reducir calidad ligeramente
               sizes=""
-               style={{
+              //placeholder="blur"
+              // blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyLrI5SZIXXWnQqNnNgtJbFW6ixBDzwG5kx/9k="
+              style={{
                 objectPosition: isMobile ? "100% 100%" : "center center",
+                // Optimizaciones para iOS
                 transform: "translateZ(0)",
                 WebkitTransform: "translateZ(0)",
                 backfaceVisibility: "hidden",
@@ -107,15 +117,16 @@ export default function HeroCarousel() {
         ))}
       </div>
 
-
+      {/* Overlay */}
+      {/* Overlay */}
       <div className="absolute inset-0 bg-opacity-20 z-3"></div>
 
-
+      {/* Sombra blanca mobile - de arriba hacia abajo */}
       <div className="md:hidden relative z-4">
         <div className="absolute -top-1 left-0 right-0 h-[600px] bg-gradient-to-b from-white/100 via-white/100 to-transparent"></div>
       </div>
 
-
+      {/* Sombra blanca desktop - de izquierda a derecha */}
       <div className="hidden md:block absolute inset-0 z-5">
         <div className="absolute top-0 left-0 bottom-0 w-[50rem] bg-gradient-to-r from-white/100 via-white/80 to-transparent"></div>
       </div>

@@ -62,6 +62,7 @@ function normalizeVisibleText(value: string) {
       const decoded = new TextDecoder("utf-8").decode(bytes);
       if (decoded && decoded !== normalized) normalized = decoded;
     } catch {
+      // keep best effort text
     }
   }
 

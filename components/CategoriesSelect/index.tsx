@@ -31,6 +31,7 @@ export default function CategoriesSelect({
 const {t} = useTranslation()
   const selectedOption = categories.find((category) => category.value === selectedCategory);
   const selectedLabel = selectedOption?.label ?? selectedCategory ?? "";
+  // Determinar si mostrar error
   const showError = isEmpty;
 
   const getCategoryIcon = (categoria) => {

@@ -11,15 +11,15 @@ type Props = {
 export default function PharseWithBackground({ onlyOne = false }: Props) {
   const { t } = useTranslation();
   const phrasesThePractice = [
-    t("el_asesor"),
-    t("la_cura"), 
-    t("la_formacion"), 
-    t("el_documento"),
-    t("el_socio"), 
-    t("el_cliente"), 
-    t("el_proveedor"), 
-    t("la_experiencia"), 
-    t("el_colaborador"),
+    t("el_asesor"), // "Il consulente"
+    t("la_cura"), // "la cura"
+    t("la_formacion"), // "la formazione"
+    t("el_documento"), // "i documenti"
+    t("el_socio"), // "il partner"
+    t("el_cliente"), // "il cliente"
+    t("el_proveedor"), // "il fornitore"
+    t("la_experiencia"), // "l'esperienza"
+    t("el_colaborador"), // "il collaboratore"
   ];
   return (
     <>

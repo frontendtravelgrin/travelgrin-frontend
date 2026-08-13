@@ -9,6 +9,8 @@ type Props = {
   classStyle?: string;
   hexButton?: string;
   categorySelected?: string;
+
+  // ✅ antes era string, ahora puede ser string u objeto país (restcountries)
   destinationCountry?: any;
 
   disabled?: boolean;
@@ -51,6 +53,7 @@ export default function ButtonSolid({
       <button
         disabled={disabled}
         onClick={() => {
+          // ✅ si se usa para búsqueda, NO abre modales
           if (hasSubmit) {
             onSubmit?.();
             return;

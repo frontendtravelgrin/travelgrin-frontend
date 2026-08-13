@@ -52,6 +52,7 @@ function CountryFlag({ code, country }: { code: string; country: string }) {
   const normalized = String(code ?? "").trim().toLowerCase();
   if (!normalized) return null;
   return (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       src={`https://flagcdn.com/w40/${normalized}.png`}
       alt={`Bandera de ${country}`}
