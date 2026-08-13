@@ -48,6 +48,10 @@ export default function AdminControlLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const basePath = "/tgn-panel-control";
 
+  const currentTitle = useMemo(() => {
+    return navItems.find((item) => item.section === activeSection)?.label ?? "Panel";
+  }, [activeSection]);
+
   return (
     <div className="flex min-h-screen overflow-x-hidden bg-slate-50">
       <style>{`
