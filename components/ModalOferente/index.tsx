@@ -1542,20 +1542,20 @@ export default function ModalOferente({
     }
   }, [effectivePlanPricing.amount, promoCode, promoValidation.applied, promoValidation.code]);
 
-  useEffect(() => {
-    if (previousIntermediarioRef.current === isIntermediario) return;
-    previousIntermediarioRef.current = isIntermediario;
-    if (!promoValidation.applied) return;
-    setPromoValidation((prev) => ({
-      ...prev,
-      applied: false,
-      code: "",
-      discountPercent: 0,
-      discountedAmount: effectivePlanPricing.amount > 0 ? effectivePlanPricing.amount : null,
-      message: "",
-      error: false,
-    }));
-  }, [effectivePlanPricing.amount, isIntermediario, promoValidation.applied]);
+  // useEffect(() => {
+  //   if (previousIntermediarioRef.current === isIntermediario) return;
+  //   previousIntermediarioRef.current = isIntermediario;
+  //   if (!promoValidation.applied) return;
+  //   setPromoValidation((prev) => ({
+  //     ...prev,
+  //     applied: false,
+  //     code: "",
+  //     discountPercent: 0,
+  //     discountedAmount: effectivePlanPricing.amount > 0 ? effectivePlanPricing.amount : null,
+  //     message: "",
+  //     error: false,
+  //   }));
+  // }, [effectivePlanPricing.amount, isIntermediario, promoValidation.applied]);
 
   const clearPaymentWatcher = useCallback(() => {
     if (paymentWatcherRef.current !== null) {
