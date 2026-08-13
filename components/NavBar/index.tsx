@@ -22,7 +22,7 @@ export default function NavBar() {
   } = useCountry();
 
 
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const pathname = usePathname();
   const isBuscarPage = pathname === "/buscar";
   const [menuOpen, setMenuOpen] = useState(false);
