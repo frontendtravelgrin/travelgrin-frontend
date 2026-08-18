@@ -955,27 +955,6 @@ export default function ModalOferente({
     if (raw.includes("invalido") || raw.includes("invalid")) return "oferente_promo_invalid";
     return "oferente_promo_validate_error";
   };
-  const effectiveFeaturedDurationDays = promoValidation.applied && promoValidation.durationDays
-    ? promoValidation.durationDays
-    : (featured120PlanPricing.durationDays || 120);
-
-  const featuredDurationLabel = locale === "en"
-    ? `${effectiveFeaturedDurationDays}-day duration`
-    : locale === "pt"
-      ? `Duração de ${effectiveFeaturedDurationDays} dias`
-      : locale === "it"
-        ? `Durata ${effectiveFeaturedDurationDays} giorni`
-        : `Duración ${effectiveFeaturedDurationDays} días`;
-
-  const featuredItems = [
-    mt("oferente_featured_item_results"),
-    featuredDurationLabel,
-    mt("oferente_featured_item_badge"),
-    mt("oferente_featured_item_description"),
-    mt("oferente_featured_item_links"),
-    mt("oferente_featured_item_languages"),
-    mt("oferente_featured_item_gallery"),
-  ];
   const basicItems = [
     mt("oferente_plan_visible_listado"),
     mt("oferente_plan_duracion_60"),
@@ -1107,6 +1086,28 @@ export default function ModalOferente({
     finalLabel: formatMoneyLabel(monthlyPlanPricing.amount > 0 ? monthlyPlanPricing.amount : null, monthlyPlanPricing.currency),
     showStrikethrough: false,
   }), [monthlyPlanPricing.amount, monthlyPlanPricing.currency]);
+
+  const effectiveFeaturedDurationDays = promoValidation.applied && promoValidation.durationDays
+    ? promoValidation.durationDays
+    : (featured120PlanPricing.durationDays || 120);
+
+  const featuredDurationLabel = locale === "en"
+    ? `${effectiveFeaturedDurationDays}-day duration`
+    : locale === "pt"
+      ? `Duração de ${effectiveFeaturedDurationDays} dias`
+      : locale === "it"
+        ? `Durata ${effectiveFeaturedDurationDays} giorni`
+        : `Duración ${effectiveFeaturedDurationDays} días`;
+
+  const featuredItems = [
+    mt("oferente_featured_item_results"),
+    featuredDurationLabel,
+    mt("oferente_featured_item_badge"),
+    mt("oferente_featured_item_description"),
+    mt("oferente_featured_item_links"),
+    mt("oferente_featured_item_languages"),
+    mt("oferente_featured_item_gallery"),
+  ];
 
   useEffect(() => setMounted(true), []);
   useEffect(() => {
