@@ -1942,10 +1942,6 @@ export default function ModalOferente({
         ? effectivePlanPricing.amount
         : Number(data.pricing.discountedAmount);
 
-      if (promoScope === "partners") {
-        setIsIntermediario(true);
-      }
-
       const appliedMessage = customPrice !== null
         ? (locale === "en" ? `Promo code applied! Fixed price: ${effectivePlanPricing.currency} ${customPrice}` : `¡Código promocional aplicado! Precio fijo: ${effectivePlanPricing.currency} ${customPrice}`)
         : fillText("oferente_promo_applied", { discount: String(discountPercent) });
@@ -2015,7 +2011,8 @@ export default function ModalOferente({
       modality: [],
       languages,
       isOfrezco,
-      isIntermediario: isIntermediario || (promoValidation.applied && promoValidation.scope === "partners"),
+      isIntermediario,
+      isPartnerPromoApplicant: promoValidation.applied && promoValidation.scope === "partners",
       destinationCountry,
       city: cleanVenue.city,
       destinationMapUrl: cleanVenue.mapUrl,
