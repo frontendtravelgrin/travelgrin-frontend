@@ -1075,17 +1075,37 @@ export default function ModalOferente({
     };
   }, [effectivePlanPricing.amount, effectivePlanPricing.currency, promoValidation]);
 
-  const featured120PriceBreakdown = useMemo<PriceBreakdown>(() => ({
-    baseLabel: formatMoneyLabel(featured120PlanPricing.amount > 0 ? featured120PlanPricing.amount : null, featured120PlanPricing.currency),
-    finalLabel: formatMoneyLabel(featured120PlanPricing.amount > 0 ? featured120PlanPricing.amount : null, featured120PlanPricing.currency),
-    showStrikethrough: false,
-  }), [featured120PlanPricing.amount, featured120PlanPricing.currency]);
+  const featured120PriceBreakdown = useMemo<PriceBreakdown>(() => {
+    const baseAmount = featured120PlanPricing.amount > 0 ? featured120PlanPricing.amount : null;
+    if (promoValidation.applied && !promoValidation.error && baseAmount !== null && promoValidation.discountedAmount !== null) {
+      return {
+        baseLabel: formatMoneyLabel(baseAmount, featured120PlanPricing.currency),
+        finalLabel: formatMoneyLabel(promoValidation.discountedAmount, featured120PlanPricing.currency),
+        showStrikethrough: promoValidation.discountedAmount !== baseAmount,
+      };
+    }
+    return {
+      baseLabel: formatMoneyLabel(baseAmount, featured120PlanPricing.currency),
+      finalLabel: formatMoneyLabel(baseAmount, featured120PlanPricing.currency),
+      showStrikethrough: false,
+    };
+  }, [featured120PlanPricing.amount, featured120PlanPricing.currency, promoValidation]);
 
-  const monthlyPriceBreakdown = useMemo<PriceBreakdown>(() => ({
-    baseLabel: formatMoneyLabel(monthlyPlanPricing.amount > 0 ? monthlyPlanPricing.amount : null, monthlyPlanPricing.currency),
-    finalLabel: formatMoneyLabel(monthlyPlanPricing.amount > 0 ? monthlyPlanPricing.amount : null, monthlyPlanPricing.currency),
-    showStrikethrough: false,
-  }), [monthlyPlanPricing.amount, monthlyPlanPricing.currency]);
+  const monthlyPriceBreakdown = useMemo<PriceBreakdown>(() => {
+    const baseAmount = monthlyPlanPricing.amount > 0 ? monthlyPlanPricing.amount : null;
+    if (promoValidation.applied && !promoValidation.error && baseAmount !== null && promoValidation.discountedAmount !== null) {
+      return {
+        baseLabel: formatMoneyLabel(baseAmount, monthlyPlanPricing.currency),
+        finalLabel: formatMoneyLabel(promoValidation.discountedAmount, monthlyPlanPricing.currency),
+        showStrikethrough: promoValidation.discountedAmount !== baseAmount,
+      };
+    }
+    return {
+      baseLabel: formatMoneyLabel(baseAmount, monthlyPlanPricing.currency),
+      finalLabel: formatMoneyLabel(baseAmount, monthlyPlanPricing.currency),
+      showStrikethrough: false,
+    };
+  }, [monthlyPlanPricing.amount, monthlyPlanPricing.currency, promoValidation]);
 
   const effectiveFeaturedDurationDays = promoValidation.applied && promoValidation.durationDays
     ? promoValidation.durationDays
