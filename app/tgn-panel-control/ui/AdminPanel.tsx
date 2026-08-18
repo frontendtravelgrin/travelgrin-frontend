@@ -113,6 +113,8 @@ type PromoCodeItem = {
   maxUses: number | null;
   usedCount: number;
   scope?: "all" | "partners";
+  durationDays?: number | null;
+  customPrice?: number | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -1314,6 +1316,8 @@ export default function AdminPanel({ section, publicationsView = "overview" }: A
   const [selectedFeedbackId, setSelectedFeedbackId] = useState<string | null>(null);
   const [promoCodeDraft, setPromoCodeDraft] = useState("");
   const [promoDiscountDraft, setPromoDiscountDraft] = useState("10");
+  const [promoDurationDaysDraft, setPromoDurationDaysDraft] = useState("");
+  const [promoCustomPriceDraft, setPromoCustomPriceDraft] = useState("");
   const [promoExpiresDraft, setPromoExpiresDraft] = useState("");
   const [promoMaxUsesDraft, setPromoMaxUsesDraft] = useState("");
   const [promoScopeDraft, setPromoScopeDraft] = useState<"all" | "partners">("all");
@@ -5395,6 +5399,8 @@ export default function AdminPanel({ section, publicationsView = "overview" }: A
     setPromoEditId(null);
     setPromoCodeDraft("");
     setPromoDiscountDraft("10");
+    setPromoDurationDaysDraft("");
+    setPromoCustomPriceDraft("");
     setPromoExpiresDraft("");
     setPromoMaxUsesDraft("");
     setPromoScopeDraft("all");
@@ -5560,7 +5566,9 @@ export default function AdminPanel({ section, publicationsView = "overview" }: A
       const payload = {
         id: promoEditId ?? undefined,
         code: promoCodeDraft,
-        discountPercent: Number(promoDiscountDraft),
+        discountPercent: Number(promoDiscountDraft || 0),
+        durationDays: promoDurationDaysDraft ? Number(promoDurationDaysDraft) : null,
+        customPrice: promoCustomPriceDraft !== "" ? Number(promoCustomPriceDraft) : null,
         expiresAt: normalizedExpiresAt,
         maxUses: promoMaxUsesDraft || null,
         scope: promoScopeDraft,
@@ -5585,6 +5593,8 @@ export default function AdminPanel({ section, publicationsView = "overview" }: A
     setPromoEditId(item.id);
     setPromoCodeDraft(item.code);
     setPromoDiscountDraft(String(item.discountPercent || 0));
+    setPromoDurationDaysDraft(item.durationDays ? String(item.durationDays) : "");
+    setPromoCustomPriceDraft(item.customPrice !== null && item.customPrice !== undefined ? String(item.customPrice) : "");
     setPromoExpiresDraft(item.expiresAt ? new Date(item.expiresAt).toISOString().slice(0, 16) : "");
     setPromoMaxUsesDraft(item.maxUses === null ? "" : String(item.maxUses));
     setPromoScopeDraft(item.scope === "partners" ? "partners" : "all");
@@ -5653,7 +5663,7 @@ export default function AdminPanel({ section, publicationsView = "overview" }: A
       <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
           <div className="mb-3">
           <p className="text-sm font-semibold text-slate-900">Precios de planes por pais</p>
-            <p className="text-xs text-slate-500">Configura los valores del destacado por 120 dias por pais de pasaporte. Si no hay regla del pais, se usa la regla por defecto.</p>
+            <p className="text-xs text-slate-500">Configura los valores del destacado por país de destino. Si no hay regla del país, se usa la regla por defecto.</p>
           </div>
         <div className="grid grid-cols-1 gap-2 md:grid-cols-8">
             <select value="featured_120d" onChange={() => setPriceRulePlanTypeDraft("featured_120d")} className="h-10 rounded-xl border border-slate-200 px-3 text-sm">
@@ -5869,9 +5879,11 @@ export default function AdminPanel({ section, publicationsView = "overview" }: A
             Generar aleatorio
           </button>
         </div>
-        <div className="grid gap-3 md:grid-cols-[minmax(0,1.4fr)_minmax(0,0.8fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="grid gap-3 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)]">
           <input value={promoCodeDraft} onChange={(event) => setPromoCodeDraft(event.target.value.toUpperCase())} placeholder="Código" className="h-10 rounded-xl border border-slate-200 px-3 text-sm md:col-span-1" />
           <input value={promoDiscountDraft} onChange={(event) => setPromoDiscountDraft(event.target.value)} placeholder="% descuento" className="h-10 rounded-xl border border-slate-200 px-3 text-sm" />
+          <input value={promoDurationDaysDraft} onChange={(event) => setPromoDurationDaysDraft(event.target.value)} placeholder="Días (ej: 365)" className="h-10 rounded-xl border border-slate-200 px-3 text-sm" />
+          <input value={promoCustomPriceDraft} onChange={(event) => setPromoCustomPriceDraft(event.target.value)} placeholder="Precio fijo ($)" className="h-10 rounded-xl border border-slate-200 px-3 text-sm" />
           <input type="datetime-local" value={promoExpiresDraft} onChange={(event) => setPromoExpiresDraft(event.target.value)} className="h-10 rounded-xl border border-slate-200 px-3 text-sm text-slate-700" title="Fecha de vencimiento" />
           <input value={promoMaxUsesDraft} onChange={(event) => setPromoMaxUsesDraft(event.target.value)} placeholder="Límite usos" className="h-10 rounded-xl border border-slate-200 px-3 text-sm" />
           <select value={promoScopeDraft} onChange={(event) => setPromoScopeDraft(event.target.value === "partners" ? "partners" : "all")} className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700">
@@ -5901,7 +5913,8 @@ export default function AdminPanel({ section, publicationsView = "overview" }: A
               <div key={item.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-700">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="rounded-full bg-white px-2 py-1 font-semibold">{item.code}</span>
-                  <span>{item.discountPercent}%</span>
+                  <span>{item.customPrice !== null && item.customPrice !== undefined ? `Precio fijo: $${item.customPrice}` : `${item.discountPercent}% desc`}</span>
+                  {item.durationDays ? <span className="rounded-full bg-cyan-50 px-2 py-0.5 font-medium text-cyan-800">{item.durationDays} días</span> : null}
                   <span>Usos: {item.usedCount}{item.maxUses !== null ? `/${item.maxUses}` : ""}</span>
                   <span>Disponibles: {remaining}</span>
                   <span>Vence: {item.expiresAt ? new Date(item.expiresAt).toLocaleString("es-AR") : "Sin vencimiento"}</span>
