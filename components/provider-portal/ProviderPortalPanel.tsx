@@ -1184,7 +1184,9 @@ const planCopy = useMemo(() => sanitizePortalVisibleTree({
 
   useEffect(() => {
     const country = String(
+      dashboard?.submissions.find((item) => ["aprobado", "approved", "active", "activo", "paid"].includes(String(item.status ?? "").trim().toLowerCase()) && String((item.destinationCountry || item.country) ?? "").trim())?.destinationCountry ??
       dashboard?.submissions.find((item) => ["aprobado", "approved", "active", "activo", "paid"].includes(String(item.status ?? "").trim().toLowerCase()) && String(item.country ?? "").trim())?.country ??
+      dashboard?.submissions.find((item) => String((item.destinationCountry || item.country) ?? "").trim())?.destinationCountry ??
       dashboard?.submissions.find((item) => String(item.country ?? "").trim())?.country ??
       selectedCountry ??
       "",
