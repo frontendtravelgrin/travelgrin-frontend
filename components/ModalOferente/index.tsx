@@ -51,9 +51,6 @@ type PromoValidationState = {
   applied: boolean;
   code: string;
   discountPercent: number;
-  customPrice?: number | null;
-  durationDays?: number | null;
-  scope?: string | null;
   originalAmount: number | null;
   discountedAmount: number | null;
   message: string;
@@ -69,7 +66,6 @@ type FeaturedPlanPricing = {
   planType?: "featured_120d" | "featured_monthly";
   currency: "ARS" | "USD";
   amount: number;
-  durationDays?: number;
 };
 
 const FEATURED_PLAN_AMOUNT = Number(process.env.NEXT_PUBLIC_FEATURED_MONTHLY_PRICE ?? 0);
@@ -955,6 +951,15 @@ export default function ModalOferente({
     if (raw.includes("invalido") || raw.includes("invalid")) return "oferente_promo_invalid";
     return "oferente_promo_validate_error";
   };
+  const featuredItems = [
+    mt("oferente_featured_item_results"),
+    mt("oferente_featured_item_duration"),
+    mt("oferente_featured_item_badge"),
+    mt("oferente_featured_item_description"),
+    mt("oferente_featured_item_links"),
+    mt("oferente_featured_item_languages"),
+    mt("oferente_featured_item_gallery"),
+  ];
   const basicItems = [
     mt("oferente_plan_visible_listado"),
     mt("oferente_plan_duracion_60"),
@@ -1075,59 +1080,17 @@ export default function ModalOferente({
     };
   }, [effectivePlanPricing.amount, effectivePlanPricing.currency, promoValidation]);
 
-  const featured120PriceBreakdown = useMemo<PriceBreakdown>(() => {
-    const baseAmount = featured120PlanPricing.amount > 0 ? featured120PlanPricing.amount : null;
-    if (promoValidation.applied && !promoValidation.error && baseAmount !== null && promoValidation.discountedAmount !== null) {
-      return {
-        baseLabel: formatMoneyLabel(baseAmount, featured120PlanPricing.currency),
-        finalLabel: formatMoneyLabel(promoValidation.discountedAmount, featured120PlanPricing.currency),
-        showStrikethrough: promoValidation.discountedAmount !== baseAmount,
-      };
-    }
-    return {
-      baseLabel: formatMoneyLabel(baseAmount, featured120PlanPricing.currency),
-      finalLabel: formatMoneyLabel(baseAmount, featured120PlanPricing.currency),
-      showStrikethrough: false,
-    };
-  }, [featured120PlanPricing.amount, featured120PlanPricing.currency, promoValidation]);
+  const featured120PriceBreakdown = useMemo<PriceBreakdown>(() => ({
+    baseLabel: formatMoneyLabel(featured120PlanPricing.amount > 0 ? featured120PlanPricing.amount : null, featured120PlanPricing.currency),
+    finalLabel: formatMoneyLabel(featured120PlanPricing.amount > 0 ? featured120PlanPricing.amount : null, featured120PlanPricing.currency),
+    showStrikethrough: false,
+  }), [featured120PlanPricing.amount, featured120PlanPricing.currency]);
 
-  const monthlyPriceBreakdown = useMemo<PriceBreakdown>(() => {
-    const baseAmount = monthlyPlanPricing.amount > 0 ? monthlyPlanPricing.amount : null;
-    if (promoValidation.applied && !promoValidation.error && baseAmount !== null && promoValidation.discountedAmount !== null) {
-      return {
-        baseLabel: formatMoneyLabel(baseAmount, monthlyPlanPricing.currency),
-        finalLabel: formatMoneyLabel(promoValidation.discountedAmount, monthlyPlanPricing.currency),
-        showStrikethrough: promoValidation.discountedAmount !== baseAmount,
-      };
-    }
-    return {
-      baseLabel: formatMoneyLabel(baseAmount, monthlyPlanPricing.currency),
-      finalLabel: formatMoneyLabel(baseAmount, monthlyPlanPricing.currency),
-      showStrikethrough: false,
-    };
-  }, [monthlyPlanPricing.amount, monthlyPlanPricing.currency, promoValidation]);
-
-  const effectiveFeaturedDurationDays = promoValidation.applied && promoValidation.durationDays
-    ? promoValidation.durationDays
-    : (featured120PlanPricing.durationDays || 120);
-
-  const featuredDurationLabel = locale === "en"
-    ? `${effectiveFeaturedDurationDays}-day duration`
-    : locale === "pt"
-      ? `Duração de ${effectiveFeaturedDurationDays} dias`
-      : locale === "it"
-        ? `Durata ${effectiveFeaturedDurationDays} giorni`
-        : `Duración ${effectiveFeaturedDurationDays} días`;
-
-  const featuredItems = [
-    mt("oferente_featured_item_results"),
-    featuredDurationLabel,
-    mt("oferente_featured_item_badge"),
-    mt("oferente_featured_item_description"),
-    mt("oferente_featured_item_links"),
-    mt("oferente_featured_item_languages"),
-    mt("oferente_featured_item_gallery"),
-  ];
+  const monthlyPriceBreakdown = useMemo<PriceBreakdown>(() => ({
+    baseLabel: formatMoneyLabel(monthlyPlanPricing.amount > 0 ? monthlyPlanPricing.amount : null, monthlyPlanPricing.currency),
+    finalLabel: formatMoneyLabel(monthlyPlanPricing.amount > 0 ? monthlyPlanPricing.amount : null, monthlyPlanPricing.currency),
+    showStrikethrough: false,
+  }), [monthlyPlanPricing.amount, monthlyPlanPricing.currency]);
 
   useEffect(() => setMounted(true), []);
   useEffect(() => {
@@ -1518,7 +1481,7 @@ export default function ModalOferente({
   }, [destinationAvailabilityMode, destinationAvailabilityCountries, destinationCountry]);
 
   useEffect(() => {
-    const country = destinationCountry.trim() || effectiveCountry;
+    const country = effectiveCountry;
     if (!country) return;
     Promise.all([
       fetch(`/api/featured-plan-pricing?country=${encodeURIComponent(country)}&planType=featured_120d`, { cache: "no-store" }).then((res) => res.json()).catch(() => ({})),
@@ -1529,13 +1492,11 @@ export default function ModalOferente({
           const item = raw?.item ?? {};
           const amount = Number(item?.amount ?? 0);
           const currency = String(item?.currency ?? "USD").toUpperCase() === "ARS" ? "ARS" : "USD";
-          const durationDays = Number(item?.durationDays);
           return {
             country: item?.country ? String(item.country) : null,
             planType: fallbackPlanType,
             currency,
             amount: Number.isFinite(amount) ? amount : 0,
-            durationDays: Number.isFinite(durationDays) && durationDays > 0 ? Math.round(durationDays) : 120,
           };
         };
         const nextFeatured120 = parsePricing(featuredData, "featured_120d");
@@ -1547,14 +1508,12 @@ export default function ModalOferente({
           ...prev,
           originalAmount: currentPlanPricing.amount > 0 ? currentPlanPricing.amount : null,
           discountedAmount: prev.applied && !prev.error
-            ? (prev.customPrice !== null && prev.customPrice !== undefined
-                ? prev.customPrice
-                : Number((currentPlanPricing.amount * (1 - Number(prev.discountPercent || 0) / 100)).toFixed(2)))
+            ? Number((currentPlanPricing.amount * (1 - Number(prev.discountPercent || 0) / 100)).toFixed(2))
             : (currentPlanPricing.amount > 0 ? currentPlanPricing.amount : null),
         }));
       })
       .catch(() => null);
-  }, [destinationCountry, effectiveCountry, selectedPlan]);
+  }, [effectiveCountry, selectedPlan]);
 
   useEffect(() => {
     if (!promoCode.trim()) {
@@ -1934,28 +1893,17 @@ export default function ModalOferente({
         }));
         return false;
       }
-      const promoScope = String(data?.promo?.scope ?? "").toLowerCase();
-      const customPrice = data?.promo?.customPrice !== null && data?.promo?.customPrice !== undefined ? Number(data.promo.customPrice) : null;
-      const durationDays = data?.promo?.durationDays !== null && data?.promo?.durationDays !== undefined ? Number(data.promo.durationDays) : null;
       const discountPercent = Number(data?.promo?.discountPercent ?? 0);
       const discountedAmount = data?.pricing?.discountedAmount === null || data?.pricing?.discountedAmount === undefined
         ? effectivePlanPricing.amount
         : Number(data.pricing.discountedAmount);
-
-      const appliedMessage = customPrice !== null
-        ? (locale === "en" ? `Promo code applied! Fixed price: ${effectivePlanPricing.currency} ${customPrice}` : `¡Código promocional aplicado! Precio fijo: ${effectivePlanPricing.currency} ${customPrice}`)
-        : fillText("oferente_promo_applied", { discount: String(discountPercent) });
-
       setPromoValidation({
         applied: true,
         code: String(data?.promo?.code ?? code).toUpperCase(),
         discountPercent,
-        customPrice,
-        durationDays,
-        scope: promoScope,
         originalAmount: effectivePlanPricing.amount > 0 ? effectivePlanPricing.amount : null,
         discountedAmount: Number.isFinite(discountedAmount) ? discountedAmount : effectivePlanPricing.amount,
-        message: appliedMessage,
+        message: fillText("oferente_promo_applied", { discount: String(discountPercent) }),
         error: false,
       });
       setPromoCode(String(data?.promo?.code ?? code).toUpperCase());
@@ -1993,10 +1941,6 @@ export default function ModalOferente({
       ? Number(promoValidation.discountedAmount)
       : effectivePlanAmount;
     const isPaidPlan = publicationPlan === "featured" || publicationPlan === "monthly";
-    const effectivePlanDurationDays = promoValidation.applied && promoValidation.durationDays
-      ? promoValidation.durationDays
-      : (featured120PlanPricing.durationDays || 120);
-
     return {
       taxonomyType: "oferente",
       status: "pendiente",
@@ -2012,7 +1956,6 @@ export default function ModalOferente({
       languages,
       isOfrezco,
       isIntermediario,
-      isPartnerPromoApplicant: promoValidation.applied && promoValidation.scope === "partners",
       destinationCountry,
       city: cleanVenue.city,
       destinationMapUrl: cleanVenue.mapUrl,
@@ -2041,7 +1984,6 @@ export default function ModalOferente({
       planAmount: isPaidPlan ? effectivePlanAmount : 0,
       planCurrency: isPaidPlan ? currentPlanPricing.currency : "USD",
       discountedPlanAmount: isPaidPlan ? discountedPlanAmount : 0,
-      planDurationDays: effectivePlanDurationDays,
       paymentType: publicationPlan === "monthly" ? "monthly" : publicationPlan === "featured" ? "one_time" : "",
       planType: publicationPlan === "monthly" ? "featured_monthly" : publicationPlan === "featured" ? "featured_120d" : "",
       requestKind,
