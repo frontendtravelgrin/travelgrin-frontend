@@ -1668,7 +1668,7 @@ export default function AdminPanel({ section, publicationsView = "overview" }: A
     if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) return null;
 
     const normalizedTime = String(pExpirationTime ?? "").trim();
-    const [hourText = "0", minuteText = "0"] = normalizedTime ? normalizedTime.split(":") : [];
+    const [hourText = "23", minuteText = "59"] = normalizedTime ? normalizedTime.split(":") : [];
     const hour = Number(hourText);
     const minute = Number(minuteText);
     if (!Number.isFinite(hour) || !Number.isFinite(minute)) return null;
@@ -8274,8 +8274,73 @@ export default function AdminPanel({ section, publicationsView = "overview" }: A
           </div>
 
           <div className="grid gap-3 md:grid-cols-3">
-            <div className="grid gap-2 rounded-2xl border border-amber-100 bg-white/90 p-4">
-              <label className="text-sm font-medium text-slate-700">Fecha y hora de expiración</label>
+            <div className="grid gap-2 rounded-2xl border border-amber-100 bg-white/90 p-4 md:col-span-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <label className="text-sm font-medium text-slate-700">Fecha y hora de expiración</label>
+                <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                  <span className="text-slate-400 font-medium mr-1">Calcular:</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const d = new Date();
+                      d.setDate(d.getDate() + 60);
+                      setPExpirationDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`);
+                      setPExpirationTime("23:59");
+                    }}
+                    className="rounded-lg bg-slate-100 hover:bg-[#00A9C6]/10 hover:text-[#00A9C6] px-2 py-1 font-medium text-slate-600 transition-colors"
+                  >
+                    +60d
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const d = new Date();
+                      d.setDate(d.getDate() + 120);
+                      setPExpirationDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`);
+                      setPExpirationTime("23:59");
+                    }}
+                    className="rounded-lg bg-slate-100 hover:bg-[#00A9C6]/10 hover:text-[#00A9C6] px-2 py-1 font-medium text-slate-600 transition-colors"
+                  >
+                    +120d
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const d = new Date();
+                      d.setDate(d.getDate() + 180);
+                      setPExpirationDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`);
+                      setPExpirationTime("23:59");
+                    }}
+                    className="rounded-lg bg-slate-100 hover:bg-[#00A9C6]/10 hover:text-[#00A9C6] px-2 py-1 font-medium text-slate-600 transition-colors"
+                  >
+                    +180d
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const d = new Date();
+                      d.setDate(d.getDate() + 365);
+                      setPExpirationDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`);
+                      setPExpirationTime("23:59");
+                    }}
+                    className="rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-2 py-1 font-semibold transition-colors border border-emerald-200"
+                  >
+                    +365d (Partner)
+                  </button>
+                  {(pExpirationDate || pExpirationTime) && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPExpirationDate("");
+                        setPExpirationTime("");
+                      }}
+                      className="rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 px-2 py-1 font-medium transition-colors"
+                    >
+                      Limpiar
+                    </button>
+                  )}
+                </div>
+              </div>
               <div className="grid gap-2 sm:grid-cols-2">
                 <input
                   type="date"
@@ -8291,7 +8356,7 @@ export default function AdminPanel({ section, publicationsView = "overview" }: A
                   step={60}
                 />
               </div>
-              <p className="text-xs text-slate-500">La hora es opcional.</p>
+              <p className="text-xs text-slate-500">Selecciona la fecha en el calendario. La hora es opcional (por defecto 23:59).</p>
             </div>
             <div className="grid gap-2 rounded-2xl border border-amber-100 bg-white/90 p-4 md:col-span-2">
               <label className="text-sm font-medium text-slate-700">Página web</label>
